@@ -95,3 +95,5 @@ auth(async(session,isCurrent)=>{
   selected=hospitals[0].id;++revision;$('#hospital-city').textContent=hospitals[0].city;await refresh();
 });
 setInterval(()=>{if(!document.hidden&&!$('#capacity-dialog').open&&!document.activeElement?.closest('.request-card'))refresh(true);},15000);
+
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!$('#capacity-dialog').open)refresh();});

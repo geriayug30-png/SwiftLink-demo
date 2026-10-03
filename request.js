@@ -1,7 +1,8 @@
 'use strict';
-const {node,button,rpc,labels,describe,date,auth}=SwiftLive;
+const {node,button,rpc,labels,describe,date,db}=SwiftLive;
 const $=s=>document.querySelector(s);
-let directory=[],fetching=false,sending=false,epoch=0;
+let directory=[],fetching=false,sending=false,epoch=0,guestReady=false;
+let linkedHospital=new URLSearchParams(location.search).get('hospital');
 function status(text,error=false){$('#request-status').textContent=text;$('#request-status').style.color=error?'#a13236':'#0d6264';}
 function showCapacity(){
   const h=directory.find(h=>h.id===$('#request-hospital').value);
@@ -18,9 +19,9 @@ function card(r){
   return c;
 }
 async function refresh(){
-  if(fetching||$('#authenticated').hidden)return;fetching=true;const current=epoch;
+  if(!guestReady||fetching||$('#authenticated').hidden)return;fetching=true;const current=epoch;
   try{const [hospitals,requests]=await Promise.all([rpc('sl_directory'),rpc('sl_my_requests')]);if(current!==epoch||$('#authenticated').hidden)return;
-    const chosen=$('#request-hospital').value;directory=hospitals;$('#request-hospital').replaceChildren(node('option','','Choose a hospital'));$('#request-hospital').firstChild.value='';
+    const chosen=$('#request-hospital').value||linkedHospital||'';linkedHospital=null;directory=hospitals;$('#request-hospital').replaceChildren(node('option','','Choose a hospital'));$('#request-hospital').firstChild.value='';
     hospitals.forEach(h=>{const o=node('option','',h.name+' · '+h.city);o.value=h.id;$('#request-hospital').append(o);});$('#request-hospital').value=chosen;showCapacity();
     $('#my-requests').replaceChildren(...(requests.length?requests.map(card):[node('div','staff-empty','No requests yet. Send a request to a participating hospital to get started.')]));
     $('#send-request').disabled=!hospitals.length||sending;status(hospitals.length?'Updated '+new Date().toLocaleTimeString():'No hospitals are accepting online requests yet. Use the hospital finder to contact a hospital directly.');
@@ -35,6 +36,17 @@ $('#care-request-form').addEventListener('submit',async event=>{
     $('#care-request-form').reset();$('#request-kind').dispatchEvent(new Event('change'));await refresh();status('Request sent. Wait for staff confirmation here; for urgent help call 112.');
   }catch(e){status(e.message,true);}finally{sending=false;$('#send-request').disabled=!directory.length;}
 });
-$('#refresh-requests').addEventListener('click',refresh);
-auth(async()=>{++epoch;await refresh();});
+$('#refresh-requests').addEventListener('click',()=>guestReady?refresh():startGuest());
+async function startGuest(){
+  status('Connecting securely…');
+  try {
+    if(!db)throw new Error('Backend is unavailable.');
+    const existing=await db.auth.getSession();if(existing.error)throw existing.error;
+    if(!existing.data.session){const result=await db.auth.signInAnonymously();if(result.error)throw result.error;}
+    guestReady=true;++epoch;await refresh();
+  }catch(e){status('Could not start your private request session: '+e.message+' Use Refresh to retry.',true);}
+}
+startGuest();
 setInterval(()=>{if(!document.hidden)refresh();},15000);
+
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});

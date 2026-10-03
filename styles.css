@@ -44,3 +44,5 @@ body{background:radial-gradient(ellipse at 8% 4%,#e6f2ed 0,transparent 34%),radi
 .results{margin-bottom:22px}
 @media(max-width:760px){.care-pills{gap:6px;margin-top:18px}.care-pills span{font-size:10px}.demo-banner{align-items:flex-start;flex-direction:column;gap:12px;padding:18px}.demo-banner h3{font-size:22px}.preview-badge{font-size:9px;padding:5px 9px}.demo-hospital{padding:21px}.demo-beds{gap:9px}.bed-metric{padding:14px 5px}.bed-metric dt{font-size:12px}.demo-card-note{font-size:11px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+
+.connected-directory{padding-top:32px;padding-bottom:32px}.connected-directory>p{color:#526b6c;line-height:1.6}.connected-directory .demo-beds{grid-template-columns:repeat(2,minmax(0,1fr))}.connected-directory .bed-metric dd{font-size:1.35rem}.connected-directory .section-heading{gap:16px;flex-wrap:wrap}

@@ -2,7 +2,7 @@
 window.SwiftLive = (() => {
   const config = window.SWIFTLINK_BACKEND || {};
   const db = config.publishableKey && window.supabase ? window.supabase.createClient(config.url, config.publishableKey, {
-    auth: { storage: window.sessionStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+    auth: { ...(config.patientMode ? {storageKey:"swiftlink-patient-session"} : {}), storage: window.sessionStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
   }) : null;
   const node = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
   const button = (text, fn, cls='button secondary') => { const n=node('button',cls,text); n.type='button'; n.addEventListener('click',fn); return n; };

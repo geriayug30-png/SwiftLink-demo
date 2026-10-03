@@ -10,7 +10,7 @@
     fetching = true;
     refreshButton.disabled = true;
     try {
-      const hospitals = await rpc('sl_directory');
+      const [hospitals, doctors] = await Promise.all([rpc('sl_directory'),rpc('sl_doctor_directory')]);
       const cards = hospitals.map(h => {
         const card = node('article', 'hospital');
         card.append(node('span', 'demo-tag', 'STAFF CONNECTED'), node('h3', '', h.name), node('p', 'hospital-address', h.city));
@@ -27,7 +27,7 @@
         if (latest) card.append(node('p', 'verified-note', 'Last staff update: ' + date(latest)));
         const request = node('a', 'button primary', 'Request bed or ambulance');
         request.href = 'request.html?hospital=' + encodeURIComponent(h.id);
-        card.append(request);
+        card.append(SwiftDoctors.render(doctors,h.id),request);
         return card;
       });
       results.replaceChildren(...cards);

@@ -1,6 +1,7 @@
 'use strict';
 const {node,button,rpc,labels,describe,date,auth}=SwiftLive;
 const $=s=>document.querySelector(s);
+let doctorRows=[];
 let hospitals=[], snapshot=null, selected='', busy=false, reading=false, revision=0, editing=null;
 function status(text,error=false){$('#staff-status').textContent=text;$('#staff-status').classList.toggle('error',error);}
 function empty(title,text){const n=node('div','staff-empty');n.append(node('strong','',title),node('p','',text));return n;}
@@ -9,9 +10,9 @@ async function refresh(quiet=false){
   if(!selected||reading||busy||$('#authenticated').hidden) return;
   const id=selected,version=revision;reading=true;
   try{
-    const data=await rpc('sl_staff_snapshot',{p_hospital:id});
+    const [data,doctors]=await Promise.all([rpc('sl_staff_snapshot',{p_hospital:id}),rpc('sl_doctor_directory')]);
     if(id!==selected||version!==revision||$('#authenticated').hidden)return;
-    snapshot=data;render();status('Synced '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · Shared across staff devices');
+    doctorRows=doctors;snapshot=data;render();status('Synced '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · Shared across staff devices');
   }catch(e){status('Unable to sync: '+e.message+' Refresh before making changes.',true);disable(true);$('#refresh-staff').disabled=false;}
   finally{reading=false;}
 }
@@ -68,6 +69,7 @@ function request(r){
   card.append(actions);return card;
 }
 function render(){
+  $('#staff-doctors').replaceChildren(SwiftDoctors.render(doctorRows,selected));
   disable(false);
   const beds=snapshot.capacity.filter(c=>c.kind!=='ambulance'),fleet=snapshot.capacity.find(c=>c.kind==='ambulance');
   $('#bed-cards').replaceChildren(...beds.sort((a,b)=>['general','icu','emergency'].indexOf(a.kind)-['general','icu','emergency'].indexOf(b.kind)).map(capacity));
@@ -97,3 +99,15 @@ auth(async(session,isCurrent)=>{
 setInterval(()=>{if(!document.hidden&&!$('#capacity-dialog').open&&!document.activeElement?.closest('.request-card'))refresh(true);},15000);
 
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!$('#capacity-dialog').open)refresh();});
+
+$('#doctor-specialty').addEventListener('change',()=>{
+ const d=doctorRows.find(d=>d.hospital_id===selected&&d.specialty.toLowerCase()===$('#doctor-specialty').value.trim().toLowerCase());
+ if(d)$('#doctor-specialty').value=d.specialty;
+ $('#doctor-total').value=d?.total??0;$('#doctor-available').value=d?.available??0;
+});
+$('#doctor-form').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const name=$('#doctor-specialty').value.trim();
+ const d=doctorRows.find(d=>d.hospital_id===selected&&d.specialty.toLowerCase()===name.toLowerCase());
+ try{await mutate('sl_set_doctors',{p_hospital:selected,p_specialty:d?.specialty||name,p_total:Number($('#doctor-total').value),p_available:Number($('#doctor-available').value),p_expected:d?.verified_at||null},'Doctor availability published to patients.');}catch(e){}
+});

@@ -9,8 +9,8 @@
   <link rel="stylesheet" href="staff.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script src="backend-config.js" defer></script>
-  <script src="live.js?v=20261003guest" defer></script>
-  <script src="staff.js?v=20261003guest" defer></script>
+  <script src="live.js?v=20261003guest" defer></script><script src="doctors.js?v=doctors1" defer></script>
+  <script src="staff.js?v=doctors1" defer></script>
 </head>
 <body class="staff-page">
   <a class="skip" href="#staff-main">Skip to dashboard</a>
@@ -32,7 +32,7 @@
       <div>
         <section aria-labelledby="capacity-title"><div class="panel-heading"><div><h2 id="capacity-title">Bed availability</h2><p>Physical free beds, including beds currently on hold.</p></div><button class="text-button" id="verify-beds">Confirm counts</button></div><div id="bed-cards" class="bed-cards" data-private></div></section>
         <section class="fleet-panel" aria-labelledby="fleet-title"><div class="panel-heading"><div><h2 id="fleet-title">Ambulance availability</h2><p>Ready vehicles, including those reserved for accepted requests.</p></div><span class="feature-icon mint" aria-hidden="true">✚</span></div><div id="fleet-controls"></div></section>
-        <section class="activity-panel" aria-labelledby="activity-title"><div class="panel-heading"><h2 id="activity-title">Recent activity</h2></div><ul id="activity-list" data-private></ul></section>
+        <section class="capacity-card" aria-labelledby="doctors-title"><h2 id="doctors-title">Doctors by specialty</h2><div id="staff-doctors" data-private></div><form id="doctor-form" class="care-form"><label for="doctor-specialty">Specialty (choose or enter another)</label><input id="doctor-specialty" list="doctor-specialties" minlength="2" maxlength="80" required><datalist id="doctor-specialties"><option value="General physician"><option value="Emergency medicine"><option value="Cardiology"><option value="Neurology"><option value="Orthopedics"><option value="Pediatrics"><option value="Obstetrics and gynecology"><option value="General surgery"><option value="Anesthesiology"><option value="Pulmonology"><option value="Dermatology"><option value="ENT"><option value="Ophthalmology"><option value="Psychiatry"><option value="Nephrology"><option value="Oncology"></datalist><label for="doctor-total">Doctors on roster</label><input id="doctor-total" type="number" min="0" max="10000" required><label for="doctor-available">Available now</label><input id="doctor-available" type="number" min="0" max="10000" required><button class="button primary">Save doctor availability</button></form></section><section class="activity-panel" aria-labelledby="activity-title"><div class="panel-heading"><h2 id="activity-title">Recent activity</h2></div><ul id="activity-list" data-private></ul></section>
       </div>
       <aside class="request-sidebar" aria-label="Request management">
         <section aria-labelledby="incoming-title"><div class="panel-heading"><h2 id="incoming-title">Incoming requests <span id="incoming-badge" class="count-badge">0</span></h2></div><div id="incoming-list" class="request-list" data-private></div></section>

@@ -7,6 +7,12 @@ const CITIES = {
   chennai: [13.0827, 80.2707], hyderabad: [17.3850, 78.4867], kolkata: [22.5726, 88.3639], ahmedabad: [23.0225, 72.5714]
 };
 const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
+// Fictional examples only: never used for calls, directions, or real search results.
+const DEMO_HOSPITALS = [
+  { name: 'Willow Care Hospital', specialty: 'Multispeciality care', emergency: true, beds: { General: 18, ICU: 4, Emergency: 6 } },
+  { name: 'Sunrise Medical Centre', specialty: 'Family & emergency care', emergency: true, beds: { General: 12, ICU: 2, Emergency: 3 } },
+  { name: 'Oakridge Community Hospital', specialty: 'General & recovery care', emergency: false, beds: { General: 9, ICU: 0, Emergency: 0 } }
+];
 const $ = (selector) => document.querySelector(selector);
 let origin = null;
 let locationLabel = '';
@@ -77,6 +83,7 @@ async function findHospitals() {
   const radius = Number($('#radius').value);
   const key = coordinates.join(',') + ':' + radius;
   searchState = 'loading'; hospitals = [];
+  $('#demo-banner').hidden = true;
   setBusy(true);
   status('Searching around ' + locationLabel + '…');
   empty('Finding nearby hospitals…', 'Emergency? You can call 112 without waiting.', true);
@@ -115,6 +122,7 @@ async function findHospitals() {
   }
 }
 function renderResults() {
+  if (searchState === 'demo') { renderDemo(); return; }
   if (searchState !== 'ready') return;
   const term = $('#hospital-filter').value.trim().toLowerCase();
   const visible = hospitals.filter(h => h.name.toLowerCase().includes(term) && (activeFilter !== 'emergency' || h.emergency) && (activeFilter !== 'phone' || h.phone));
@@ -139,6 +147,37 @@ function renderResults() {
     const bedCheck = element('button', 'bed-check', 'Ask about beds');
     bedCheck.addEventListener('click', () => showDialog('beds', hospital));
     card.append(bedCheck);
+    return card;
+  });
+  $('#results').replaceChildren(...cards);
+}
+function renderDemo() {
+  searchState = 'demo';
+  $('#demo-banner').hidden = false;
+  const term = $('#hospital-filter').value.trim().toLowerCase();
+  const visible = DEMO_HOSPITALS.filter(h => h.name.toLowerCase().includes(term)
+    && (activeFilter !== 'emergency' || h.emergency) && activeFilter !== 'phone');
+  status(`${visible.length} demo hospital${visible.length === 1 ? '' : 's'} · Sample bed counts only. Choose a city or use your location for real hospitals.`);
+  if (!visible.length) {
+    empty('No demo hospitals match.', activeFilter === 'phone' ? 'Demo hospitals have no real phone numbers. Choose a city or use your location to find hospital contacts.' : 'Try another hospital name or select All hospitals.');
+    return;
+  }
+  const cards = visible.map((hospital) => {
+    const card = element('article', 'hospital demo-hospital');
+    const top = element('div', 'hospital-header');
+    const mark = element('span', 'hospital-mark', '+');
+    mark.setAttribute('aria-hidden', 'true');
+    top.append(mark, element('span', 'demo-tag', 'FICTIONAL HOSPITAL'));
+    card.append(top, element('h3', '', hospital.name), element('p', 'hospital-address', hospital.specialty));
+    card.append(element('p', 'emergency-label', hospital.emergency ? 'Sample service · Emergency care' : 'Sample service · General care'));
+    const beds = element('dl', 'demo-beds');
+    Object.entries(hospital.beds).forEach(([type, count]) => {
+      const metric = element('div', count === 0 ? 'bed-metric zero' : 'bed-metric');
+      metric.append(element('dt', '', type), element('dd', '', String(count)));
+      beds.append(metric);
+    });
+    card.append(element('p', 'bed-caption', 'Sample available beds'), beds,
+      element('p', 'demo-card-note', 'For preview only · Not live availability'));
     return card;
   });
   $('#results').replaceChildren(...cards);
@@ -175,7 +214,7 @@ document.querySelectorAll('[data-filter]').forEach(button => button.addEventList
 $('#hospital-filter').addEventListener('input', renderResults);
 $('#city').addEventListener('change', () => {
   const value = $('#city').value;
-  if (!CITIES[value]) { ++requestId; requestController?.abort(); origin = null; hospitals = []; searchState = 'idle'; setBusy(false); status('Choose a city or use your location to get started.'); empty('Let’s find care close to you.', 'Choose your location above to see nearby hospitals.'); return; }
+  if (!CITIES[value]) { ++requestId; requestController?.abort(); origin = null; hospitals = []; setBusy(false); $('#maps-fallback').href = 'https://www.google.com/maps/search/hospitals+near+me/'; renderDemo(); return; }
   origin = CITIES[value]; locationLabel = $('#city').selectedOptions[0].textContent;
   findHospitals();
 });
@@ -195,3 +234,4 @@ $('#locate').addEventListener('click', () => {
   }, {enableHighAccuracy:false, timeout:12000, maximumAge:60000});
 });
 $('#care-dialog').addEventListener('click', event => { if (event.target === $('#care-dialog')) { const r = $('#care-dialog').getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) $('#care-dialog').close(); } });
+renderDemo();

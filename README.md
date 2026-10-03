@@ -2,7 +2,7 @@
 
 **A little closer to care.** A fast, comforting emergency-aid website built for patients and the people helping them.
 
-**[Open the live website](https://geriayug30-png.github.io/SwiftLink/)**
+**[Repository](https://github.com/geriayug30-png/SwiftLink-demo)**
 
 ## Project Overview
 
@@ -16,13 +16,13 @@ There is **nothing to install**: no framework, package manager, API key, databas
 
 1. Download this repository using **Code → Download ZIP**, then extract it (or clone it).
 2. Open **index.html** in a modern browser.
-3. Select a city to find hospitals. For the most reliable location permissions and API access, use the hosted HTTPS site or a local server.
+3. Explore three fictional demo hospitals with sample general, ICU, and emergency bed counts immediately. Select a city or use your location to replace the demo with real directory results. For the most reliable location permissions and API access, use a hosted HTTPS site or a local server.
 
 Optional local server, if Python is already installed:
 
 ```bash
-git clone https://github.com/geriayug30-png/SwiftLink.git
-cd SwiftLink
+git clone https://github.com/geriayug30-png/SwiftLink-demo.git
+cd SwiftLink-demo
 python -m http.server 8000
 ```
 
@@ -40,7 +40,9 @@ In the repository's **Settings → Pages**, choose **Deploy from a branch**, sel
 - Search radii of 5, 10, and 20 km, with nearest-first results and straight-line distances.
 - Filters for hospital name, listed emergency service, and available phone numbers.
 - Hospital contact links, Google Maps directions, and a bed-enquiry checklist.
-- Honest **availability not verified** labels instead of invented bed counts.
+- Three clearly labelled fictional demo hospitals with sample bed counts before searching; no location request or network query on page load.
+- Real hospital results retain **availability not verified** labels. Demo cards never offer calls, directions, or booking.
+- Soft background gradients, colour-accented hospital cards, and readable bed-count tiles on desktop and mobile.
 - Accessible labels, keyboard navigation, dialog focus handling, reduced-motion support, and responsive layouts.
 - Loading, empty, permission-denied, timeout, and network-error states with a Maps fallback.
 - Five-minute in-memory hospital-query caching. No patient data collection or location storage.
@@ -68,8 +70,8 @@ assets/
 README.md        Project documentation
 ```
 
-1. The visitor selects a city or explicitly requests device location.
-2. JavaScript sends a bounded hospital query to Overpass.
+1. The visitor sees fictional demo hospitals, then selects a city or explicitly requests device location. Name and emergency filters also work on demo cards; phone filtering explains that demo hospitals have no real phone numbers.
+2. Demo cards are removed and JavaScript sends a bounded hospital query to Overpass. Clearing the city selection restores the preview; failed real searches show an error rather than sample availability.
 3. Results are normalized, duplicate entries removed, and distances calculated locally.
 4. The visitor filters results, calls a listed number, or opens directions.
 5. Bed availability is confirmed directly with the hospital; SwiftLink makes no reservation.
@@ -89,7 +91,7 @@ All code runs in the browser. No server-side application or login is needed. Ext
 
 ## Screenshots / Demo Information
 
-**Live demo: [geriayug30-png.github.io/SwiftLink](https://geriayug30-png.github.io/SwiftLink/)** — deployed with GitHub Pages. You can also open `index.html` directly.
+Open `index.html` directly, or enable GitHub Pages using the instructions above.
 
 ![SwiftLink desktop view](screenshots/desktop.jpg)
 
@@ -100,11 +102,11 @@ All code runs in the browser. No server-side application or login is needed. Ext
 
 </details>
 
-Checked on desktop and at a 390px mobile viewport. Live Mumbai hospital results, name and phone filters, empty-result handling, ambulance and bed-enquiry dialogs, and the unmodified logo were verified. No emergency calls were placed during testing.
+The demo update was checked in Chromium at 1440px, 390px, and 320px widths. Automated browser checks covered initial demo counts, no initial network/geolocation request, name/emergency/phone filters, location success and denial, city search, directory failure, restoring the demo, and the bed-enquiry dialog. Geolocation and directory responses were mocked for repeatable checks; live provider availability was not tested. JavaScript syntax and whitespace checks passed. No emergency calls were placed during testing.
 
 Suggested walkthrough:
 
-1. Open the ambulance panel without placing a call.
+1. Browse the fictional demo hospitals and sample bed counts, then open the ambulance panel without placing a call.
 2. Select Mumbai, or use a location with permission.
 3. Try hospital-name and contact filters, then change the search radius.
 4. Open **Ask about beds** and review the confirmation checklist.

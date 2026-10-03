@@ -23,7 +23,7 @@
         <h1 id="headline">When it matters,<br><span>find help faster.</span></h1>
         <p class="lead">A calmer way to find nearby hospitals, ask about beds, and reach emergency help. One simple place.</p>
         <div class="intro-actions"><a href="#find-care" class="button primary">Find care near me <span aria-hidden="true">⌖</span></a><button class="button secondary" data-open="ambulance">Need an ambulance?</button></div>
-        <p class="micro">No sign-up. No downloads. Just your next step.</p>
+        <div class="care-pills" aria-label="SwiftLink benefits"><span>No sign-up needed</span><span>Explore a demo first</span><span>Location stays in your control</span></div>
       </div>
       <aside class="emergency-card" aria-labelledby="emergency-title">
         <div class="card-top"><span class="round-icon" aria-hidden="true">✆</span><span>INDIA’S EMERGENCY HELPLINE</span></div>
@@ -42,6 +42,7 @@
     <section class="finder wrap" id="find-care" aria-labelledby="finder-title">
       <div class="section-heading"><div><p class="eyebrow">YOUR NEXT STEP</p><h2 id="finder-title">Find the care you need.</h2></div><span class="section-note">A location. A hospital. A helping hand.</span></div>
       <div class="finder-panel">
+        <div class="finder-step"><span aria-hidden="true">01</span><p>Your search starts here <small>Choose a city or use your current location.</small></p></div>
         <div class="location-row">
           <div class="location-select"><label for="city">Search around a city</label><select id="city"><option value="">Choose city</option><option value="mumbai">Mumbai</option><option value="thane">Thane</option><option value="navimumbai">Navi Mumbai</option><option value="pune">Pune</option><option value="delhi">New Delhi</option><option value="bengaluru">Bengaluru</option><option value="chennai">Chennai</option><option value="hyderabad">Hyderabad</option><option value="kolkata">Kolkata</option><option value="ahmedabad">Ahmedabad</option></select></div>
           <span class="or">or</span><button class="button primary" id="locate"><span aria-hidden="true">⌖</span> Use my location</button>
@@ -49,6 +50,7 @@
         </div>
         <p class="privacy-note">Using your location shares coordinates with OpenStreetMap’s Overpass service to find hospitals. SwiftLink does not save your location.</p>
         <div class="divider"></div>
+        <div id="demo-banner" class="demo-banner" hidden><div><span class="demo-kicker">A PREVIEW OF WHAT’S POSSIBLE</span><h3>Explore care, before you search.</h3><p>These fictional hospitals and bed counts are demo data. Search above to see real hospitals near you.</p></div><span class="preview-badge">DEMO PREVIEW</span></div>
         <div class="results-toolbar"><div class="filters" aria-label="Hospital filters"><button class="filter active" data-filter="all" aria-pressed="true">All hospitals</button><button class="filter" data-filter="emergency" aria-pressed="false">Emergency listed</button><button class="filter" data-filter="phone" aria-pressed="false">Phone available</button></div><label class="sr-only" for="hospital-filter">Filter results by hospital name</label><input type="search" id="hospital-filter" placeholder="Filter by hospital name"></div>
         <div id="status" class="status" role="status" aria-live="polite">Choose a city or use your location to get started.</div>
         <div id="results" class="results">

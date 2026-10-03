@@ -194,7 +194,7 @@ function showDialog(type, hospital) {
     const actions = element('div', 'dialog-actions'); actions.append(link('Call 112 now', 'tel:112', 'button emergency')); body.append(actions);
   } else {
     $('#dialog-title').textContent = hospital ? 'Ask ' + hospital.name + ' about beds' : 'A quick call brings more clarity.';
-    body.append(element('p', '', 'Live bed counts are not available on SwiftLink. Contact the hospital’s admissions or emergency desk to confirm:'));
+    body.append(element('p', '', 'Directory listings do not include confirmed bed counts. Use Request care for participating hospitals, or contact the hospital’s admissions or emergency desk to confirm:'));
     const list = element('ul');
     ['Is the type of bed needed available — general, ICU, or emergency?', 'Can the hospital provide the care the patient needs?', 'Where should the patient arrive, and what is needed for admission?'].forEach(text => list.append(element('li', '', text)));
     body.append(list, element('p', 'dialog-note', 'Availability can change quickly. A directory listing is not a bed reservation or a guarantee of care.'));

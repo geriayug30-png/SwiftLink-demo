@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#147e80">
+  <title>Hospital staff dashboard · SwiftLink</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="staff.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="backend-config.js" defer></script>
+  <script src="live.js" defer></script>
+  <script src="staff.js" defer></script>
+</head>
+<body class="staff-page">
+  <a class="skip" href="#staff-main">Skip to dashboard</a>
+  <header class="staff-header">
+    <a href="index.html" class="brand" aria-label="SwiftLink home"><span class="logo-crop"><img src="assets/swiftlink-logo.png" alt="SwiftLink" width="1024" height="1024"></span></a>
+    <span class="staff-label">HOSPITAL WORKSPACE</span><button id="sign-out" class="text-button" hidden>Sign out</button>
+    <a href="index.html" class="button secondary small">← Patient website</a>
+  </header>
+  <main id="staff-main" class="staff-shell">
+    <div class="staff-title"><div><p class="eyebrow">A LITTLE CLOSER TO CARE</p><h1>Ready for the next arrival.</h1><p>Manage capacity, review requests, and coordinate care.</p></div><span class="preview-badge">STAFF ACCESS</span></div>
+    <section id="auth-gate" class="auth-panel"><h2>Hospital staff sign-in</h2><p>Use your assigned staff email. New accounts must verify their email before receiving access.</p><form id="auth-form"><label for="auth-email">Email</label><input id="auth-email" name="email" type="email" autocomplete="email" required><label for="auth-password">Password</label><input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="8" required><div class="dialog-actions"><button class="button primary" value="login">Sign in</button><button class="button secondary" value="register">Create account</button></div></form><p id="auth-status" role="status" aria-live="polite"></p></section>
+    <div id="authenticated" hidden>
+    <section class="hospital-summary" aria-label="Hospital overview">
+      <div class="hospital-picker"><span class="summary-mark" aria-hidden="true">✚</span><div><label for="staff-hospital">Your hospital</label><select id="staff-hospital" data-private></select><p id="hospital-city"></p></div></div>
+      <dl class="staff-stats"><div><dt>available beds</dt><dd id="available-count">0</dd></div><div><dt>active holds</dt><dd id="held-count">0</dd></div><div><dt>awaiting response</dt><dd id="pending-count">0</dd></div></dl>
+    </section>
+    <div class="sync-row"><div id="staff-status" class="staff-status" role="status" aria-live="polite"></div><button id="refresh-staff" class="text-button">Refresh</button></div>
+    <div class="dashboard-grid">
+      <div>
+        <section aria-labelledby="capacity-title"><div class="panel-heading"><div><h2 id="capacity-title">Bed availability</h2><p>Physical free beds, including beds currently on hold.</p></div><button class="text-button" id="verify-beds">Confirm counts</button></div><div id="bed-cards" class="bed-cards" data-private></div></section>
+        <section class="fleet-panel" aria-labelledby="fleet-title"><div class="panel-heading"><div><h2 id="fleet-title">Ambulance availability</h2><p>Ready vehicles, including those reserved for accepted requests.</p></div><span class="feature-icon mint" aria-hidden="true">✚</span></div><div id="fleet-controls"></div></section>
+        <section class="activity-panel" aria-labelledby="activity-title"><div class="panel-heading"><h2 id="activity-title">Recent activity</h2></div><ul id="activity-list" data-private></ul></section>
+      </div>
+      <aside class="request-sidebar" aria-label="Request management">
+        <section aria-labelledby="incoming-title"><div class="panel-heading"><h2 id="incoming-title">Incoming requests <span id="incoming-badge" class="count-badge">0</span></h2></div><div id="incoming-list" class="request-list" data-private></div></section>
+        <section aria-labelledby="arrivals-title"><div class="panel-heading"><h2 id="arrivals-title">Expected arrivals <span id="arrivals-badge" class="count-badge">0</span></h2></div><p class="section-help">Acceptance holds capacity for 20 minutes. After dispatch, it stays reserved until arrival or cancellation. Dispatch status is manually confirmed by staff.</p><div id="arrivals-list" class="request-list" data-private></div></section>
+      </aside>
+    </div>
+    </div><p class="staff-footnote">Shared securely through Supabase · Refreshes every 15 seconds while visible. Counts reflect staff confirmations, not continuous monitoring. No patient diagnosis or medical record is requested.</p>
+  </main>
+  <dialog id="capacity-dialog" aria-labelledby="capacity-dialog-title"><form method="dialog"><button class="close-dialog" aria-label="Close dialog">×</button></form><h2 id="capacity-dialog-title">Set capacity</h2><p>Enter confirmed physical counts, including units on hold.</p><form id="capacity-form"><label for="capacity-total">Total capacity</label><input id="capacity-total" type="number" min="0" max="10000" required><label for="capacity-free">Physical free capacity</label><input id="capacity-free" type="number" min="0" max="10000" required><p id="capacity-error" role="alert"></p><button class="button primary">Save confirmed counts</button></form></dialog>
+  <noscript><p class="noscript">Enable JavaScript to use the staff dashboard. <a href="index.html">Return to the patient website.</a></p></noscript>
+</body>
+</html>
